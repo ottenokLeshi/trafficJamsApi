@@ -1,9 +1,8 @@
-    var coors = "";
-    var lines = "";
-    var myMap;
-    var myPlacemark;
-    var oContent;
-    var route;
+    var coors = "",
+        lines = "",
+        route,
+        k = 0,
+        d = new Date();
 
     // создание массива, в который динамически будет записываться информация для вывода в файл
     var MyBlobBuilder = function() {
@@ -25,7 +24,6 @@
     };
 
     var myBlobBuilder = new MyBlobBuilder();
-    var d = new Date();
     myBlobBuilder.append("TIME : " + d.getHours().toString() + ":" + d.getMinutes().toString() + "\n");
 
 
@@ -41,14 +39,7 @@
 
             reader.onload = function(e) {
                 lines = reader.result.split("\n");
-
-                for (var i = 0; i < 1100; i++) {
-                    coors = lines[i].split(" ");
-
-                    workWithCoors(coors);
-                }
-
-
+                workWithCoors(lines);
             }
             reader.readAsText(file);
         });
@@ -56,74 +47,53 @@
 
 
     // инициализуруем объекты яндекс карт
-    function workWithCoors(coors) {
-
-
-        if (coors[1] == 43 || coors[2] == 43 || coors[1] == 201 || coors[2] == 201 || coors[1] == 251 || coors[2] == 251 || coors[1] == 42 || coors[2] == 42 || coors[1] == 38 || coors[2] == 38 || coors[1] == 45 || coors[2] == 45 || coors[1] == 252 || coors[2] == 252 || coors[1] == 199 || coors[2] == 199 || coors[1] == 142 || coors[2] == 142 || coors[1] == 11 || coors[2] == 11 || coors[1] == 21 || coors[2] == 21 || coors[1] == 79 || coors[2] == 79) {
+    function workWithCoors(lines) {
+        //if (coors[1] == 43 || coors[2] == 43 || coors[1] == 201 || coors[2] == 201 || coors[1] == 251 || coors[2] == 251 || coors[1] == 42 || coors[2] == 42 || coors[1] == 38 || coors[2] == 38 || coors[1] == 45 || coors[2] == 45 || coors[1] == 252 || coors[2] == 252 || coors[1] == 199 || coors[2] == 199 || coors[1] == 142 || coors[2] == 142 || coors[1] == 11 || coors[2] == 11 || coors[1] == 21 || coors[2] == 21 || coors[1] == 79 || coors[2] == 79) {
             ymaps.ready(init);
-        } else {
-
-            ymaps.ready(init2);
-        }
     }
-
-
-    var k = 0;
 
     // функция, считающая время переезда по ребру графа
     function init() {
+        let chain = Promise.resolve();
 
-
-        route = ymaps.route([
-
-
-            [parseFloat(coors[3]), parseFloat(coors[4])], {
-                type: 'wayPoint',
-                point: [parseFloat(coors[5]), parseFloat(coors[6])]
-            }
-
-
-        ], {
-            avoidTrafficJams: true
-        }).then(
-            function(route) {
-
-
-                document.getElementById("result").value = route.getHumanJamsTime();
-
-                myBlobBuilder.append(document.getElementById("result").value.split("&")[0] + "\n");
-                k = k + 1;
-            }
-        );
+        lines.forEach(function(line){
+            chain = chain
+                    .then(() => getRoute(line))
+                    .then(route => addToBlob(route));
+        });
 
     }
 
+    function getRoute(line) {
+        var coors = line.split(" ");
+        
+        if (coors[1] == 43 || coors[2] == 43 || coors[1] == 201 || coors[2] == 201 || coors[1] == 251 || coors[2] == 251 || coors[1] == 42 || coors[2] == 42 || coors[1] == 38 || coors[2] == 38 || coors[1] == 45 || coors[2] == 45 || coors[1] == 252 || coors[2] == 252 || coors[1] == 199 || coors[2] == 199 || coors[1] == 142 || coors[2] == 142 || coors[1] == 11 || coors[2] == 11 || coors[1] == 21 || coors[2] == 21 || coors[1] == 79 || coors[2] == 79) {
+            return route = ymaps.route([
+                [parseFloat(coors[3]), parseFloat(coors[4])], {
+                    type: 'wayPoint',
+                    point: [parseFloat(coors[5]), parseFloat(coors[6])]
+                }
 
 
-    // функция, считающая время переезда по ребру графа
-    function init2() {
+            ], {
+                avoidTrafficJams: true
+            })
+        } else {
+            return route = ymaps.route([
 
 
-        route = ymaps.route([
-
-
-            [parseFloat(coors[3]), parseFloat(coors[4])], {
-                type: 'wayPoint',
-                point: [parseFloat(coors[5]), parseFloat(coors[6])]
-            }
-
-
-        ]).then(
-            function(route) {
-
-
-                document.getElementById("result").value = route.getHumanJamsTime();
-
-                myBlobBuilder.append(document.getElementById("result").value.split("&")[0] + "\n");
-                k = k + 1;
-            }
-        );
-
+                [parseFloat(coors[3]), parseFloat(coors[4])], {
+                    type: 'wayPoint',
+                    point: [parseFloat(coors[5]), parseFloat(coors[6])]
+                }
+            ])
+        }
+    }
+    
+    function addToBlob(route) {
+        document.getElementById("result").value = route.getHumanJamsTime();
+        myBlobBuilder.append(document.getElementById("result").value.split("&")[0] + "\n");
+        k = k + 1;
     }
 
 
