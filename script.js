@@ -48,7 +48,6 @@
 
     // инициализуруем объекты яндекс карт
     function workWithCoors(lines) {
-        //if (coors[1] == 43 || coors[2] == 43 || coors[1] == 201 || coors[2] == 201 || coors[1] == 251 || coors[2] == 251 || coors[1] == 42 || coors[2] == 42 || coors[1] == 38 || coors[2] == 38 || coors[1] == 45 || coors[2] == 45 || coors[1] == 252 || coors[2] == 252 || coors[1] == 199 || coors[2] == 199 || coors[1] == 142 || coors[2] == 142 || coors[1] == 11 || coors[2] == 11 || coors[1] == 21 || coors[2] == 21 || coors[1] == 79 || coors[2] == 79) {
             ymaps.ready(init);
     }
 
@@ -56,9 +55,10 @@
     function init() {
         let chain = Promise.resolve();
 
-        lines.forEach(function(line){
+        lines.forEach(function(line, k){
             chain = chain
                     .then(() => getRoute(line))
+                    .catch(() => Promise.resolve())
                     .then(route => addToBlob(route));
         });
 
@@ -66,7 +66,7 @@
 
     function getRoute(line) {
         var coors = line.split(" ");
-        
+
         if (coors[1] == 43 || coors[2] == 43 || coors[1] == 201 || coors[2] == 201 || coors[1] == 251 || coors[2] == 251 || coors[1] == 42 || coors[2] == 42 || coors[1] == 38 || coors[2] == 38 || coors[1] == 45 || coors[2] == 45 || coors[1] == 252 || coors[2] == 252 || coors[1] == 199 || coors[2] == 199 || coors[1] == 142 || coors[2] == 142 || coors[1] == 11 || coors[2] == 11 || coors[1] == 21 || coors[2] == 21 || coors[1] == 79 || coors[2] == 79) {
             return route = ymaps.route([
                 [parseFloat(coors[3]), parseFloat(coors[4])], {
@@ -91,6 +91,12 @@
     }
     
     function addToBlob(route) {
+        if (!route){
+            document.getElementById("result").value = "Error: \"Can't construct a route\"";
+            myBlobBuilder.append(document.getElementById("result").value.split("&")[0] + "\n");
+            k = k + 1;
+            return Promise.resolve();
+        }
         document.getElementById("result").value = route.getHumanJamsTime();
         myBlobBuilder.append(document.getElementById("result").value.split("&")[0] + "\n");
         k = k + 1;
