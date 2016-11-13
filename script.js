@@ -95,11 +95,12 @@
             document.getElementById("result").value = "Error: \"Can't construct a route\"";
             myBlobBuilder.append(document.getElementById("result").value.split("&")[0] + "\n");
             k = k + 1;
-            return Promise.resolve();
+        } else{
+            document.getElementById("result").value = route.getHumanJamsTime();
+            myBlobBuilder.append(document.getElementById("result").value.split("&")[0] + "\n");
+            k = k + 1;
         }
-        document.getElementById("result").value = route.getHumanJamsTime();
-        myBlobBuilder.append(document.getElementById("result").value.split("&")[0] + "\n");
-        k = k + 1;
+        return Promise.resolve();
     }
 
 
