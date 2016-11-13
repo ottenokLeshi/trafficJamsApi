@@ -1,8 +1,8 @@
-    var coors = "",
-        lines = "",
-        route,
-        k = 0,
-        d = new Date();
+    var coors = "";
+    var lines = "";
+    var route;
+    var k = 0;
+    var d = new Date();
 
     // создание массива, в который динамически будет записываться информация для вывода в файл
     var MyBlobBuilder = function() {
