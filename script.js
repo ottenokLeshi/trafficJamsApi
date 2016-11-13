@@ -53,14 +53,14 @@
 
     // функция, считающая время переезда по ребру графа
     function init() {
-        let chain = Promise.resolve();
+        var chain = Promise.resolve();
 
-        lines.forEach(function(line, k){
+        lines.forEach(line =>
             chain = chain
                     .then(() => getRoute(line))
                     .catch(() => Promise.resolve())
-                    .then(route => addToBlob(route));
-        });
+                    .then(route => addToBlob(route))
+        );
 
     }
 
