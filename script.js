@@ -51,7 +51,7 @@
             ymaps.ready(init);
     }
 
-    // функция, считающая время переезда по ребру графа
+    //функция, считающая время переезда по ребру графа
     function init() {
         var chain = Promise.resolve();
 
@@ -63,7 +63,13 @@
         );
 
     }
-
+    /**
+    *Функция отвечающая за возвращение маршрута
+    *
+    *@param {Array} line - Массив координат для ребра
+    *
+    *@return {Объект-Promise} при успешном построении преобразуется в Объект, описывающий маршрут
+    */
     function getRoute(line) {
         var coors = line.split(" ");
 
@@ -89,7 +95,13 @@
             ])
         }
     }
-    
+    /**
+    *Функция отвечающая за запись вычисленного значения в исходный файл
+    *
+    *@param {Object} route - Объект, описывающий проложенный маршрут.
+    *
+    *@return {Promise} необходимо для непрерывной обработки запросов
+    */
     function addToBlob(route) {
         if (!route){
             document.getElementById("result").value = "Error: \"Can't construct a route\"";
@@ -102,9 +114,6 @@
         }
         return Promise.resolve();
     }
-
-
-
 
     var urlOfTextFile = null;
     var create = document.getElementById('create');
@@ -120,8 +129,6 @@
     makeUrlForTextFile = function() {
 
         var data = myBlobBuilder.getBlob();
-
-
 
         // If we are replacing a previously generated file we need to
         // manually revoke the object URL to avoid memory leaks.
