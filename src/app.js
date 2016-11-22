@@ -10,21 +10,19 @@ var myBlobBuilder = new MyBlobBuilder();
 myBlobBuilder.append("TIME : " + d.getHours().toString() + ":" + d.getMinutes().toString() + "\n");
 
 // считываем данные из файла, координаты точек графа
-window.onload = function() {
-	var fileInput = document.getElementById('fileInput');
-	var fileDisplayArea = document.getElementById('fileDisplayArea');
+var fileInput = document.getElementById('fileInput');
+var fileDisplayArea = document.getElementById('fileDisplayArea');
 
-	fileInput.addEventListener('change', function(e) {
-		var file = fileInput.files[0];
-		var reader = new FileReader();
+fileInput.addEventListener('change', function(e) {
+	var file = fileInput.files[0];
+	var reader = new FileReader();
 
-		reader.onload = function(e) {
-			lines = reader.result.split("\n");
-			workWithCoors(lines);
-		}
-		reader.readAsText(file);
-	});
-}
+	reader.onload = function(e) {
+		lines = reader.result.split("\n");
+		workWithCoors(lines);
+	}
+	reader.readAsText(file);
+});
 
 
 // инициализуруем объекты яндекс карт
