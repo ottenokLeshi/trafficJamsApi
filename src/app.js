@@ -24,24 +24,21 @@ fileInput.addEventListener('change', function(e) {
 	reader.readAsText(file);
 });
 
+/**
+ * Функция инициализирует объект яндекс карт
+ */
+const workWithCoors = () => ymaps.ready(() => {
+	const chain = Promise.resolve();
 
-// инициализуруем объекты яндекс карт
-function workWithCoors(lines) {
-	ymaps.ready(init);
-}
-
-//функция, считающая время переезда по ребру графа
-function init() {
-	let chain = Promise.resolve();
-
+	// функция, считающая время переезда по ребру графа
 	lines.forEach(line =>
-	chain = chain
+		chain
 			.then(() => getRoute(line))
-.catch(() => Promise.resolve())
-.then(route => addToBlob(route))
-);
+			.catch(() => Promise.resolve())
+			.then(route => addToBlob(route))
+	);
+});
 
-}
 /**
  *Функция отвечающая за возвращение маршрута
  *
