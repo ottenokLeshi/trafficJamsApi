@@ -1,21 +1,21 @@
 import MyBlobBuilder                from './components/my-blob-builder';
 
-var coors = "";
-var lines = "";
-var route;
-var k = 0;
-var d = new Date();
+let coors = "";
+let lines = "";
+let route;
+let k = 0;
+let d = new Date();
 
-var myBlobBuilder = new MyBlobBuilder();
+const myBlobBuilder = new MyBlobBuilder();
 myBlobBuilder.append("TIME : " + d.getHours().toString() + ":" + d.getMinutes().toString() + "\n");
 
 // считываем данные из файла, координаты точек графа
-var fileInput = document.getElementById('fileInput');
-var fileDisplayArea = document.getElementById('fileDisplayArea');
+let fileInput = document.getElementById('fileInput');
+let fileDisplayArea = document.getElementById('fileDisplayArea');
 
 fileInput.addEventListener('change', function(e) {
-	var file = fileInput.files[0];
-	var reader = new FileReader();
+	let file = fileInput.files[0];
+	let reader = new FileReader();
 
 	reader.onload = function(e) {
 		lines = reader.result.split("\n");
@@ -32,7 +32,7 @@ function workWithCoors(lines) {
 
 //функция, считающая время переезда по ребру графа
 function init() {
-	var chain = Promise.resolve();
+	let chain = Promise.resolve();
 
 	lines.forEach(line =>
 	chain = chain
@@ -50,7 +50,7 @@ function init() {
  *@return {Объект-Promise} при успешном построении преобразуется в Объект, описывающий маршрут
  */
 function getRoute(line) {
-	var coors = line.split(" ");
+	let coors = line.split(" ");
 
 	if (coors[1] == 43 || coors[2] == 43 || coors[1] == 201 || coors[2] == 201 || coors[1] == 251 || coors[2] == 251 || coors[1] == 42 || coors[2] == 42 || coors[1] == 38 || coors[2] == 38 || coors[1] == 45 || coors[2] == 45 || coors[1] == 252 || coors[2] == 252 || coors[1] == 199 || coors[2] == 199 || coors[1] == 142 || coors[2] == 142 || coors[1] == 11 || coors[2] == 11 || coors[1] == 21 || coors[2] == 21 || coors[1] == 79 || coors[2] == 79) {
 		return route = ymaps.route([
@@ -94,13 +94,13 @@ function addToBlob(route) {
 	return Promise.resolve();
 }
 
-var urlOfTextFile = null;
-var create = document.getElementById('create');
-var textbox = document.getElementById('textbox');
+let urlOfTextFile = null;
+let create = document.getElementById('create');
+let textbox = document.getElementById('textbox');
 
 const makeUrlForTextFile = function() {
 
-	var data = myBlobBuilder.getBlob();
+	let data = myBlobBuilder.getBlob();
 
 	// If we are replacing a previously generated file we need to
 	// manually revoke the object URL to avoid memory leaks.
@@ -112,7 +112,7 @@ const makeUrlForTextFile = function() {
 };
 
 create.addEventListener('click', function() {
-	var link = document.getElementById('downloadlink');
+	let link = document.getElementById('downloadlink');
 	link.href = makeUrlForTextFile();
 	link.style.display = 'block';
 }, false);
