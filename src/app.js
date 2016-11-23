@@ -22,7 +22,7 @@ fileInput.addEventListener('change', function(e) {
 
 	reader.onload = function(e) {
 		lines = reader.result.split("\n");
-		workWithCoors(lines);
+		workWithCoors(lines, myBlobBuilder, result);
 	}
 	reader.readAsText(file);
 });
@@ -30,6 +30,7 @@ fileInput.addEventListener('change', function(e) {
 let urlOfTextFile = null;
 let create = document.getElementById('create');
 let textbox = document.getElementById('textbox');
+let result = document.getElementById("result");
 
 const makeUrlForTextFile = function() {
 	const data = myBlobBuilder.getBlob();

@@ -1,15 +1,15 @@
 /**
  * Функция инициализирует объект яндекс карт
  */
-export const workWithCoors = () => ymaps.ready(() => {
-	const chain = Promise.resolve();
+export const workWithCoors = (lines, myBlobBuilder, result) => ymaps.ready(() => {
+	let chain = Promise.resolve();
 
 	// функция, считающая время переезда по ребру графа
 	lines.forEach(line =>
-		chain
+		chain = chain
 			.then(() => getRoute(line))
 			.catch(() => Promise.resolve())
-			.then(route => addToBlob(route))
+			.then(route => addToBlob(myBlobBuilder, route))
 	);
 });
 
@@ -51,15 +51,13 @@ export const getRoute = line => {
  *
  *@return {Promise} необходимо для непрерывной обработки запросов
  */
-export const addToBlob = (myBlobBuilder, route, k) => {
+export const addToBlob = (myBlobBuilder, route) => {
 	if (!route){
 		document.getElementById("result").value = "Error: \"Can't construct a route\"";
 		myBlobBuilder.append(document.getElementById("result").value.split("&")[0] + "\n");
-		k = k + 1;
 	} else {
 		document.getElementById("result").value = route.getHumanJamsTime();
 		myBlobBuilder.append(document.getElementById("result").value.split("&")[0] + "\n");
-		k = k + 1;
 	}
 
 	return Promise.resolve();
