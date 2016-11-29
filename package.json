@@ -1,0 +1,28 @@
+{
+  "name": "traffic-jams-api",
+  "version": "0.1.0",
+  "description": "Рассчет времени проезда между двумя точками.",
+  "main": "./src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "./node_modules/.bin/webpack-dev-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ottenokLeshi/trafficJamsApi.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ottenokLeshi/trafficJamsApi/issues"
+  },
+  "homepage": "https://github.com/ottenokLeshi/trafficJamsApi#readme",
+  "dependencies": {
+    "babel-core": "6.18.2",
+    "babel-loader": "6.2.8",
+    "babel-preset-es2015": "6.18.0",
+    "babel-preset-stage-0": "6.16.0",
+    "webpack": "1.13.3",
+    "webpack-dev-server": "1.16.2"
+  }
+}
