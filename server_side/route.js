@@ -1,17 +1,12 @@
 const route = (handle, pathname, response) => {
-		if (pathname != '/favicon.ico'){
-	  		console.log("About to route a request for " + pathname);
-	  	}
+	console.log("About to route a request for " + pathname);
 
  	if (typeof handle[pathname] === 'function') {
     	return handle[pathname](response);
   	} else {
-  	
-	  	if (pathname != '/favicon.ico'){
-	    	console.log("No request handler found for " + pathname);
-	  	}
-
-    return "404 Not found";
+		console.log("No request handler found for " + pathname);
+        response.writeHead(404, {"Content-Type": "text/html"});
+        response.end("Error!");
 	}
 }
 
