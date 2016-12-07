@@ -1,17 +1,16 @@
 /**
  * Функция инициализирует объект яндекс карт
  */
-
 const workWithCoors = (lines, myBlobBuilder, window) => {
 	let chain = Promise.resolve();
 
 	// функция, считающая время переезда по ребру графа
 	lines.forEach(line =>
 		chain = chain
-			.then(() => getRoute(line, window))
-			.catch(() => Promise.resolve())
-			.then(route => addToBlob(myBlobBuilder, route))
-		);
+            .then(() => getRoute(line, window))
+            .catch(() => Promise.resolve())
+            .then(route => addToBlob(myBlobBuilder, route))
+    );
 };
 
 /**
@@ -41,14 +40,13 @@ const getRoute = (line, window) => {
 			}
 		])
 	}
-}
+};
 
 /**
  *Функция отвечающая за запись вычисленного значения в исходный файл
  *
  *@param {MyBlobBuilder} myBlobBuilder - инстанс класса MyBlobBuilder
  *@param {Object} route - Объект, описывающий проложенный маршрут.
- *@param {Number} k - количество итераций
  *
  *@return {Promise} необходимо для непрерывной обработки запросов
  */
@@ -62,8 +60,6 @@ const addToBlob = (myBlobBuilder, route) => {
 	console.log(time);
     myBlobBuilder.append(time.split("&")[0] + "\n");
 	return Promise.resolve();
-}
+};
 
-exports.workWithCoors = workWithCoors;
-exports.getRoute = getRoute;
-exports.addToBlob = addToBlob;
+module.exports = workWithCoors;

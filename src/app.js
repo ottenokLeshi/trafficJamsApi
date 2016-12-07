@@ -1,19 +1,24 @@
-let MyBlobBuilder = require("./components/myBlobBuilder");
-let	workWithCoors = require("./helpers/index.js");
+const MyBlobBuilder = require("./components/myBlobBuilder");
+const workWithCoors = require("./helpers/index.js");
 let fs = require("fs");
-
 let lines = "";
 let d = new Date();
+const myBlobBuilder = new MyBlobBuilder();
 
-const myBlobBuilder = new MyBlobBuilder.MyBlobBuilder();
-myBlobBuilder.append("TIME : " + d.getHours().toString() + ":" + d.getMinutes().toString() + "\n");
-
+/**
+ * Функция, запускающая алгоритм получения параметров от API
+ *
+ * @param {Object} виртуальное окно
+ */
 function main(window) {
 	fs.readFile('./input.txt', function(err, data){
-		if (err) throw err;
+		if (err) {
+		    throw err;
+        }
+        myBlobBuilder.append("TIME : " + d.getHours().toString() + ":" + d.getMinutes().toString() + "\n");
 		lines = data.toString().split("\n");
-		workWithCoors.workWithCoors(lines, myBlobBuilder, window);
-		});
+		workWithCoors(lines, myBlobBuilder, window);
+    });
 }
 
-exports.main = main;
+module.exports = main;

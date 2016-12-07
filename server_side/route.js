@@ -1,6 +1,12 @@
+/**
+ * Функция проверяет, есть ли обработчики запроса, вызывая их впоследствии, или же возвращает 404
+ *
+ * @param {Array} handle - массив функций-обработчиков запроса
+ * @param {String} pathname - запрошенный путь URL
+ * @param {Array} response - ответ на запрос
+ */
 const route = (handle, pathname, response) => {
 	console.log("About to route a request for " + pathname);
-
  	if (typeof handle[pathname] === 'function') {
     	return handle[pathname](response);
   	} else {
@@ -8,6 +14,6 @@ const route = (handle, pathname, response) => {
         response.writeHead(404, {"Content-Type": "text/html"});
         response.end("Error!");
 	}
-}
+};
 
-exports.route = route;
+module.exports = route;

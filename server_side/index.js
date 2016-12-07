@@ -1,14 +1,21 @@
-let server = require("./server");
-let route  = require("./route");
+const server = require("./server");
+const route  = require("./route");
+const requestHandlers = require("./requestHandlers");
 let virtualWindow = require("./virtualWindow");
-let requestHandlers = require("./requestHandlers");
 
-//let main = require("./src/app.js");
-let handle  = {};
-
+/**
+ * На запросы навешиваются обработчики
+ */
+const handle  = {};
 handle['/'] = requestHandlers.start;
 handle['/routes'] = requestHandlers.getRoutes;
 
-server.start(route.route, handle);
+/**
+ * Запуск сервера
+ */
+server.start(route, handle);
 
+/**
+ * Запуск виртуального окна, где буду проводиться запросы к API
+ */
 virtualWindow.createWindow();

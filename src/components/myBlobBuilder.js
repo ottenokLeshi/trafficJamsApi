@@ -37,4 +37,4 @@ class MyBlobBuilder {
 	}
 }
 
-exports.MyBlobBuilder = MyBlobBuilder;
+module.exports = MyBlobBuilder;
