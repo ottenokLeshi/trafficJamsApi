@@ -1,6 +1,6 @@
 const MyBlobBuilder = require("./components/myBlobBuilder");
 const workWithCoors = require("./helpers/index.js");
-let fs = require("fs");
+const fs = require("fs");
 let lines = "";
 let d = new Date();
 const myBlobBuilder = new MyBlobBuilder();
@@ -11,7 +11,7 @@ const myBlobBuilder = new MyBlobBuilder();
  * @param {Object} виртуальное окно
  */
 function main(window) {
-	fs.readFile('./input.txt', function(err, data){
+	fs.readFile('../input.txt', function(err, data){
 		if (err) {
 		    throw err;
         }

@@ -1,5 +1,5 @@
-let http = require("http");
-let url = require("url");
+const http = require("http");
+const url = require("url");
 
 /**
  * Функция запускающая сервер

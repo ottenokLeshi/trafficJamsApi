@@ -4,6 +4,8 @@
  * @param {Array} handle - массив функций-обработчиков запроса
  * @param {String} pathname - запрошенный путь URL
  * @param {Array} response - ответ на запрос
+ *
+ * @return {Function} - вызов обработчика запроса
  */
 const route = (handle, pathname, response) => {
 	console.log("About to route a request for " + pathname);

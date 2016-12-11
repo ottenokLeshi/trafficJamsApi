@@ -1,7 +1,7 @@
 const server = require("./server");
 const route  = require("./route");
 const requestHandlers = require("./requestHandlers");
-let virtualWindow = require("./virtualWindow");
+const virtualWindow = require("./virtualWindow");
 
 /**
  * На запросы навешиваются обработчики
