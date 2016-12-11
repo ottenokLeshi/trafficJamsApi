@@ -22,7 +22,7 @@ class MyBlobBuilder {
 	 */
 	append(part) {
 		this.parts = [...this.parts, part];
-		this.block = undefined;
+		this.blob = undefined;
 	}
 
 	/**
@@ -37,4 +37,4 @@ class MyBlobBuilder {
 	}
 }
 
-export default MyBlobBuilder;
+module.exports = MyBlobBuilder;

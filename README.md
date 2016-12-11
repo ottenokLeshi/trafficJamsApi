@@ -27,4 +27,4 @@ Node.js
 
 1. `$ npm install`
 2. `$ npm start`
-3. Открываем браузер на 'localhost:8080'
+3. Открываем браузер на 'localhost:8888'
