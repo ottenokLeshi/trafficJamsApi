@@ -3,15 +3,19 @@
  *
  * https://github.com/tmpvar/jsdom
  */
-const jsdom = require("jsdom").jsdom;
-const main = require("../src/app");
+const jsdom = require('jsdom').jsdom;
+const main = require('../src/app');
 
 const createWindow = () => {
-    let html = "<!DOCTYPE html><html><head><script src=\"http://api-maps.yandex.ru/2.0/?load=package.standard,package.geoObjects,package.route&lang=ru-RU\" type=\"text/javascript\"></script></head><body></body></html>";
-    let window = jsdom(html, {
+    const html = '<!DOCTYPE html><html><head>' +
+        '<script src="http://api-maps.yandex.ru/2.0/?load=package' +
+        '.standard,package.geoObjects,package.route&lang=ru-RU" ' +
+        'type="text/javascript"></script></head>' +
+        '<body></body></html>';
+    const window = jsdom(html, {
         features: {
-            FetchExternalResources: ["script"],
-            ProcessExternalResources: ["script"]
+            FetchExternalResources: ['script'],
+            ProcessExternalResources: ['script']
         }
     }).defaultView;
 
