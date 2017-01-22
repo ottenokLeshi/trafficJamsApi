@@ -1,14 +1,15 @@
-const server = require("./server");
-const route  = require("./route");
-const requestHandlers = require("./requestHandlers");
-const virtualWindow = require("./virtualWindow");
+const server = require('./server');
+const route = require('./route');
+const requestHandlers = require('./requestHandlers');
+const virtualWindow = require('./virtualWindow');
 
 /**
  * На запросы навешиваются обработчики
  */
-const handle  = {};
+const handle = [];
 handle['/'] = requestHandlers.start;
 handle['/routes'] = requestHandlers.getRoutes;
+handle['/getError'] = requestHandlers.getError;
 
 /**
  * Запуск сервера
