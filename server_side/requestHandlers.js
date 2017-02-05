@@ -11,7 +11,7 @@ const fs = require('fs');
  * @param {Object} response - ответ на запрос
  */
 const start = response => {
-    fs.readFile('../public/index.html', (err, data) => {
+    fs.readFile('./public/index.html', (err, data) => {
         if (err) {
             throw err;
         }
