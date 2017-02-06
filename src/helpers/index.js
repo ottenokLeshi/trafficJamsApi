@@ -1,3 +1,5 @@
+const pool = require('../../database_side/database');
+
 /**
  * Функция отвечающая за возвращение маршрута
  *
@@ -33,21 +35,29 @@ const getRoute = (line, window) => {
 /**
  * Функция отвечающая за запись вычисленного значения в исходный файл
  *
- * @param {MyBlobBuilder} myBlobBuilder - инстанс класса MyBlobBuilder
  * @param {Object} route - Объект, описывающий проложенный маршрут.
+ * @param {Array} line - Массив координат и id ребра
  *
  * @return {Promise} необходимо для непрерывной обработки запросов
  */
-const addToBlob = (myBlobBuilder, route) => {
+const addToBlob = (route, line) => {
     let time;
     if (!route) {
         time = "Error: \"Can't construct a route\"";
     } else {
-        time = route.getHumanJamsTime();
+        time = route.getHumanJamsTime().split('&')[0];
+        if (time > 10000000) {
+            time = 10000000;
+        }
     }
     /* eslint-disable no-console */
-    console.log(time);
-    myBlobBuilder.append(`${time.split('&')[0]}\n`);
+    const queryText = `UPDATE lines SET weight = ${time} WHERE id = ${line[0]}`;
+    pool.query(queryText, err => {
+        if (err) {
+            console.log(`Error with updating weight ${err}`);
+        }
+        console.log(`Line ${line.split(' ')[0]} was updated`);
+    });
     return Promise.resolve();
 };
 
@@ -55,16 +65,15 @@ const addToBlob = (myBlobBuilder, route) => {
  * Функция инициализирует объект яндекс карт
  *
  * @param {Array} lines - Массив координат всех ребер
- * @param {MyBlobBuilder} myBlobBuilder - инстанс класса MyBlobBuilder
  * @param {Object} window - виртуальное окно
  */
-const workWithCoors = (lines, myBlobBuilder, window) => {
+const workWithCoors = (lines, window) => {
     let chain = Promise.resolve();
     lines.forEach(line => {
         chain = chain
         .then(() => getRoute(line, window))
         .catch(() => Promise.resolve())
-        .then(route => addToBlob(myBlobBuilder, route));
+        .then(route => addToBlob(route, line));
     });
 };
 
