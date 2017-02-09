@@ -19,4 +19,4 @@ server.start(route, handle);
 /**
  * Запуск виртуального окна, где буду проводиться запросы к API
  */
-virtualWindow.createWindow();
+//virtualWindow.createWindow();

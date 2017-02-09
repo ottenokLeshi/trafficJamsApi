@@ -51,12 +51,12 @@ const addToBlob = (route, line) => {
         }
     }
     /* eslint-disable no-console */
-    const queryText = `UPDATE lines SET weight = ${time} WHERE id = ${line[0]}`;
+    const queryText = `UPDATE lines SET weight = ${time} WHERE id = ${line.split(' ')[0]} `;
     pool.query(queryText, err => {
         if (err) {
             console.log(`Error with updating weight ${err}`);
         }
-        console.log(`Line ${line.split(' ')[0]} was updated`);
+        console.log(`Line ${line.split(' ')[0]} was updated with ${time}`);
     });
     return Promise.resolve();
 };

@@ -13,7 +13,7 @@ const main = window => {
     pool.query('SELECT id, begin_p, end_p, ' +
         '(SELECT ST_AsText(point) FROM points WHERE id = begin_p) AS begin_point, ' +
         '(SELECT ST_AsText(point) FROM points WHERE id = end_p) AS end_point ' +
-        'FROM lines LIMIT 10', (err, data) => {
+        'FROM lines', (err, data) => {
         if (err) {
             throw err;
         }
