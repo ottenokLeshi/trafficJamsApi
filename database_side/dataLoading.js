@@ -2,46 +2,166 @@
  * Загрузка данных для первого запуска БД
  */
 const fs = require('fs');
-const pool = require('./database');
+const lines = require('../database_side/models/lines');
+const points = require('../database_side/models/points');
+const methodsDb = require('./databaseMethods');
 
 /**
- * Функция добавляющая вершины
+ * Создание таблицы
+ *
+ * @param {Object} table - таблица из /models/
+ *
+ * @return {Promise} - результат создания таблицы
  */
-const loadPointsToDb = () => {
-    fs.readFile('./input.txt', (err, data) => {
-        if (err) {
-            throw err;
+const createTable = table => table.sync().then(() => {
+    console.log('Success with creating table!');
+}).catch(err => {
+    console.log(`Database error: ${err}`);
+});
+
+/**
+ * Преобразование строк в объекты
+ *
+ * @param {Array} fileArray - массив строк
+ *
+ * @return {Array} graphArray - массив объектов
+ */
+const getObjects = fileArray => {
+    const graphArray = fileArray.map(str => {
+        const item = str.split(' ');
+        return {
+            id: item[0],
+            begin_p: item[1],
+            end_p: item[2],
+            begin_p_lat: item[3],
+            begin_p_lon: item[4],
+            end_p_lat: item[5],
+            end_p_lon: item[6]
+        };
+    });
+    return graphArray;
+};
+
+/**
+ * Чтение из файла
+ *
+ * @return {Array} - массив строк, описывающих ребера графа
+ */
+const getLinesFromFile = () => {
+    const fileArray = fs.readFileSync('./input.txt', { encoding: 'utf8' }).split('\n');
+    return getObjects(fileArray);
+};
+
+/**
+ * Добавление ребер в таблицу БД
+ *
+ * @param {Array} graphArray - массив объектов
+ *
+ * @return {Promise} - результат загрузки данных в БД
+ */
+const loadLinesToDb = graphArray => {
+    const elements = graphArray.map(item => {
+        const edge = item;
+        delete edge.begin_p_lat;
+        delete edge.begin_p_lon;
+        delete edge.end_p_lat;
+        delete edge.end_p_lon;
+        edge.weight = 0;
+        return edge;
+    });
+    return methodsDb.createDb(lines, elements).then(() => {
+        console.log('Lines were loaded!');
+    }).catch(err => {
+        console.log(`Database error: ${err}`);
+    });
+};
+
+/**
+ * Функция, выделяющая вершины из графа
+ *
+ * @param {Array} graphArray - массив объектов
+ *
+ * @return {Array} - массив объектов, описывающих вершины графа
+ */
+const getNodes = graphArray => {
+    const pointsArray = [];
+    /* counter - счетчик для занесения в pointsArray уникальных значений */
+    let counter = 1;
+    graphArray.forEach(item => {
+        if (parseInt(item.begin_p, 10) === counter) {
+            const lat = parseFloat(item.begin_p_lat);
+            const lon = parseFloat(item.begin_p_lon);
+            const pointGeo = {
+                type: 'Point',
+                coordinates: [lat, lon],
+                crs: { type: 'name', properties: { name: 'EPSG:4326' } }
+            };
+            pointsArray.push({
+                id: item.begin_p,
+                point: pointGeo
+            });
+            counter += 1;
         }
-        const lines = data.toString().split('\n');
-        let k = 1;
-        lines.forEach(info => {
-            const line = info.split(' ');
-            if (parseInt(line[1], 10) === k) {
-                const m = `POINT(${parseFloat(line[3])} ${parseFloat(line[4])})`;
-                pool.query('INSERT INTO points VALUES ($1, $2)', [parseInt(line[1], 10), m]);
-                k += 1;
+    });
+    return pointsArray;
+};
+
+/**
+ * Добавление вершин в таблицу БД
+ *
+ * @param {Array} graphArray - массив объектов, описывающих ребра
+ *
+ * @return {Promise} - результат создания таблицы
+ */
+const loadPointsToDb = graphArray => {
+    const elements = getNodes(graphArray);
+    return methodsDb.createDb(points, elements).then(() => {
+        console.log('Points were loaded!');
+    }).catch(err => {
+        console.log(`Database error: ${err}`);
+    });
+};
+
+/**
+ * После разрешения двух промисов, в которых происходит создание таблиц (если таблицы не были созданы,
+ * происходит заполнение значениями), устанавливается связь между таблицами
+ *
+ * @return {Promise} - промис, сигнализирующий о заполнении таблиц БД
+ */
+const firstLaunching = () => {
+    const graphArray = getLinesFromFile();
+    const linesPromise = new Promise(resolve => createTable(lines).then(() => {
+        /*
+        * Проверяем, заполнена ли таблица, вызываем Promise.resolve,
+        * иначе заполняем значениями и вызываем Promise.resolve
+        */
+        methodsDb.readDb(lines).then(data => {
+            if (data.length !== 0) {
+                resolve();
+            } else {
+                loadLinesToDb(graphArray).then(() => resolve());
             }
         });
-    });
-};
-
-/**
- * Функция добавляющая ребра
- */
-const loadEdgesToDb = () => {
-    fs.readFile('./input.txt', (err, data) => {
-        if (err) {
-            throw err;
-        }
-        const lines = data.toString().split('\n');
-        lines.forEach(info => {
-            const line = info.split(' ');
-            pool.query('INSERT INTO lines VALUES ($1, $2, $3)',
-                [parseInt(line[0], 10), parseInt(line[1], 10), parseInt(line[2], 10)]
-            );
+    }));
+    const pointsPromise = new Promise(resolve => createTable(points).then(() => {
+        methodsDb.readDb(points).then(data => {
+            if (data.length !== 0) {
+                resolve();
+            } else {
+                loadPointsToDb(graphArray).then(() => resolve());
+            }
         });
+    }));
+    /* Дожидаемся загрузки таблиц и значений в них, и устанавливаем отношения
+    * между таблицами
+    */
+    return Promise.all([linesPromise, pointsPromise]).then(() => {
+        points.hasMany(lines, { as: 'begin_point', foreignKey: 'begin_p' });
+        points.hasMany(lines, { as: 'end_point', foreignKey: 'end_p' });
+        lines.belongsTo(points, { as: 'begin_point', foreignKey: 'begin_p' });
+        lines.belongsTo(points, { as: 'end_point', foreignKey: 'end_p' });
     });
 };
 
-module.exports = loadPointsToDb;
-module.exports = loadEdgesToDb;
+
+module.exports = firstLaunching;

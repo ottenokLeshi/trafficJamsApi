@@ -1,16 +1,15 @@
-const pool = require('../../database_side/database');
+const lines = require('../../database_side/models/lines');
+const methodsDb = require('../../database_side/databaseMethods');
 
 /**
  * Функция отвечающая за возвращение маршрута
  *
- * @param {String} line - Массив координат для ребра
+ * @param {String} coors - Массив координат для ребра
  * @param {Object} window - виртуальное окно
  *
  * @return {Object} при успешном построении преобразуется в Объект, описывающий маршрут
  */
-const getRoute = (line, window) => {
-    const coors = line.split(' ');
-
+const getRoute = (coors, window) => {
     if (coors[1] === 43 || coors[2] === 43 || coors[1] === 201 || coors[2] === 201 || coors[1] === 251 ||
         coors[2] === 251 || coors[1] === 42 || coors[2] === 42 || coors[1] === 38 || coors[2] === 38 ||
         coors[1] === 45 || coors[2] === 45 || coors[1] === 252 || coors[2] === 252 || coors[1] === 199 ||
@@ -51,25 +50,22 @@ const addToBlob = (route, line) => {
         }
     }
     /* eslint-disable no-console */
-    const queryText = `UPDATE lines SET weight = ${time} WHERE id = ${line.split(' ')[0]} `;
-    pool.query(queryText, err => {
-        if (err) {
-            console.log(`Error with updating weight ${err}`);
-        }
-        console.log(`Line ${line.split(' ')[0]} was updated with ${time}`);
-    });
+    methodsDb.updateDb(lines,
+        { weight: time },
+        { where: { id: line[0] } }
+        );
     return Promise.resolve();
 };
 
 /**
  * Функция инициализирует объект яндекс карт
  *
- * @param {Array} lines - Массив координат всех ребер
+ * @param {Array} linesArray - Массив координат всех ребер
  * @param {Object} window - виртуальное окно
  */
-const workWithCoors = (lines, window) => {
+const workWithCoors = (linesArray, window) => {
     let chain = Promise.resolve();
-    lines.forEach(line => {
+    linesArray.forEach(line => {
         chain = chain
         .then(() => getRoute(line, window))
         .catch(() => Promise.resolve())

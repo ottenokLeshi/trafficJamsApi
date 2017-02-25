@@ -40,7 +40,7 @@ const getRoutes = response => {
             } else {
                 line.push(`<br> id = ${data.rows[i].id} time = ${data.rows[i].weight} </br>`);
             }
-            lines.push(line.join(' '));
+            lines.push(line);
         }
         fs.writeFile('./public/data.txt', lines.join('\n'), err2 => {
             if (err2) {

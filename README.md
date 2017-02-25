@@ -26,3 +26,4 @@ PostgreSQL + PostGIS
 1. `$ npm install`
 2. `$ npm start`
 3. Открываем браузер на 'localhost:8888'
+4. Создаем файл config.js и прописываем конфигурации подключения к бд

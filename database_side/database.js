@@ -1,18 +1,19 @@
 /**
  * Конфигурация базы данных
  */
-const pg = require('pg');
 
-const config = {
-    host: 'localhost',
-    port: 5432,
-    database: 'SPb_map',
-    user: 'postgres',
-    password: null
-};
+const databaseConfig = require('../config');
+const Sequelize = require('sequelize');
 
-const pool = new pg.Pool(config);
+const config = Object.assign({}, {
+    username: 'username',
+    password: 'password',
+    database: 'database',
+    host: '127.0.0.1',
+    dialect: 'postgres'
+}, databaseConfig);
 
-pool.connect();
+const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
-module.exports = pool;
+module.exports = sequelize;
+
