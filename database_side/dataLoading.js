@@ -5,6 +5,7 @@ const fs = require('fs');
 const lines = require('../database_side/models/lines');
 const points = require('../database_side/models/points');
 const methodsDb = require('./databaseMethods');
+const _ = require('lodash');
 
 /**
  * Создание таблицы
@@ -29,15 +30,14 @@ const createTable = table => table.sync().then(() => {
 const getObjects = fileArray => {
     const graphArray = fileArray.map(str => {
         const item = str.split(' ');
-        return {
+        return _.omit({
             id: item[0],
             begin_p: item[1],
             end_p: item[2],
             begin_p_lat: item[3],
             begin_p_lon: item[4],
             end_p_lat: item[5],
-            end_p_lon: item[6]
-        };
+            end_p_lon: item[6] }, []);
     });
     return graphArray;
 };
@@ -62,12 +62,8 @@ const getLinesFromFile = () => {
 const loadLinesToDb = graphArray => {
     const elements = graphArray.map(item => {
         const edge = item;
-        delete edge.begin_p_lat;
-        delete edge.begin_p_lon;
-        delete edge.end_p_lat;
-        delete edge.end_p_lon;
         edge.weight = 0;
-        return edge;
+        return _.pick(edge, ['id', 'begin_p', 'end_p', 'weight']);
     });
     return methodsDb.createDb(lines, elements).then(() => {
         console.log('Lines were loaded!');
@@ -130,28 +126,26 @@ const loadPointsToDb = graphArray => {
  */
 const firstLaunching = () => {
     const graphArray = getLinesFromFile();
-    const linesPromise = new Promise(resolve => createTable(lines).then(() => {
+    const linesPromise = createTable(lines).then(() => {
         /*
-        * Проверяем, заполнена ли таблица, вызываем Promise.resolve,
-        * иначе заполняем значениями и вызываем Promise.resolve
+        * Проверяем, заполнена ли таблица, в,
+        * иначе заполняем значениями и вызываем функцию загрузки данных в БД
         */
         methodsDb.readDb(lines).then(data => {
             if (data.length !== 0) {
-                resolve();
-            } else {
-                loadLinesToDb(graphArray).then(() => resolve());
+                return data;
             }
+            return loadLinesToDb(graphArray);
         });
-    }));
-    const pointsPromise = new Promise(resolve => createTable(points).then(() => {
+    });
+    const pointsPromise = createTable(points).then(() => {
         methodsDb.readDb(points).then(data => {
             if (data.length !== 0) {
-                resolve();
-            } else {
-                loadPointsToDb(graphArray).then(() => resolve());
+                return data;
             }
+            return loadPointsToDb(graphArray);
         });
-    }));
+    });
     /* Дожидаемся загрузки таблиц и значений в них, и устанавливаем отношения
     * между таблицами
     */

@@ -8,18 +8,6 @@
 <body>
     <button id="create" onclick="getData()">Create file</button> <br>
     <output id="outputRoute"></output>
-
-    <script>
-        let output = document.getElementById('outputRoute');
-        const getData = () => {
-            fetch('/routes')
-                .then((response) => {
-                    return response.text()
-                }).then(data => {
-                    output.innerHTML = data;
-            })
-
-       }
-    </script>
+    <script src="script.js"> </script>
 </body>
 </html>

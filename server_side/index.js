@@ -8,7 +8,8 @@ const firstLaunching = require('../database_side/dataLoading');
  * На запросы навешиваются обработчики
  */
 const handle = [];
-handle['/'] = requestHandlers.start;
+handle['/'] = requestHandlers.getPublicFile;
+handle['/script.js'] = requestHandlers.getPublicFile;
 handle['/routes'] = requestHandlers.getRoutes;
 handle['/getError'] = requestHandlers.getError;
 

@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('./../database');
 
-const lines = sequelize.define('lines', {
+const Lines = sequelize.define('lines', {
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -21,4 +21,4 @@ const lines = sequelize.define('lines', {
     }
 });
 
-module.exports = lines;
+module.exports = Lines;

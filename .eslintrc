@@ -38,6 +38,7 @@
   },
 
   "rules": {
+	"arrow-body-style": ["error", "as-needed"],
 	"no-multiple-empty-lines": "error",
 	"no-multi-spaces": ["error", {
 	  "exceptions": {

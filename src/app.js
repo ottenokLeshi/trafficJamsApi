@@ -2,6 +2,7 @@ const workWithCoors = require('./helpers/index.js');
 const lines = require('../database_side/models/lines');
 const points = require('../database_side/models/points');
 const methodsDb = require('../database_side/databaseMethods');
+const _ = require('lodash');
 
 /**
  * Функция, возвращающая описание ребра
@@ -26,16 +27,17 @@ const main = window => {
         .then(data => {
             const graphArray = data.map(item => {
                 const line = item.toJSON();
-                return [
-                    line.id,
-                    line.begin_p,
-                    line.end_p,
-                    line.begin_point.point.coordinates[0],
-                    line.begin_point.point.coordinates[1],
-                    line.end_point.point.coordinates[0],
-                    line.end_point.point.coordinates[1]
-                ];
+                return {
+                    id: _.get(line, 'id', 1),
+                    begin_p: _.get(line, 'begin_p', 1),
+                    end_p: _.get(line, 'end_p', 1),
+                    begin_point_lat: _.get(line, 'begin_point.point.coordinates[0]', 59.9386300),
+                    begin_point_lon: _.get(line, 'begin_point.point.coordinates[1]', 30.3141300),
+                    end_point_lat: _.get(line, 'end_point.point.coordinates[0]', 59.9386300),
+                    end_point_lon: _.get(line, 'end_point.point.coordinates[1]', 30.3141300),
+                };
             });
+            console.log(graphArray)
             workWithCoors(graphArray, window);
         }
     );

@@ -2,31 +2,39 @@ const lines = require('../../database_side/models/lines');
 const methodsDb = require('../../database_side/databaseMethods');
 
 /**
+ * Проверка вершин
+ *
+ * @param {Object} edge - Массив координат для ребра
+ *
+ * @return {Number} - Позицию элемента в массиве или же -1
+ */
+const edgeChecking = edge => {
+    const checkArr = [43, 201, 251, 42, 38, 45, 252, 199, 142, 11, 21, 79];
+    return checkArr.indexOf(edge.begin_p) || checkArr.indexOf(edge.end_p);
+};
+
+/**
  * Функция отвечающая за возвращение маршрута
  *
- * @param {String} coors - Массив координат для ребра
+ * @param {Object} edge - Массив координат для ребра
  * @param {Object} window - виртуальное окно
  *
  * @return {Object} при успешном построении преобразуется в Объект, описывающий маршрут
  */
-const getRoute = (coors, window) => {
-    if (coors[1] === 43 || coors[2] === 43 || coors[1] === 201 || coors[2] === 201 || coors[1] === 251 ||
-        coors[2] === 251 || coors[1] === 42 || coors[2] === 42 || coors[1] === 38 || coors[2] === 38 ||
-        coors[1] === 45 || coors[2] === 45 || coors[1] === 252 || coors[2] === 252 || coors[1] === 199 ||
-        coors[2] === 199 || coors[1] === 142 || coors[2] === 142 || coors[1] === 11 || coors[2] === 11 ||
-        coors[1] === 21 || coors[2] === 21 || coors[1] === 79 || coors[2] === 79) {
+const getRoute = (edge, window) => {
+    if (edgeChecking(edge)) {
         return window.ymaps.route([
-            [parseFloat(coors[3]), parseFloat(coors[4])], {
+            [edge.begin_point_lat, edge.begin_point_lon], {
                 type: 'wayPoint',
-                point: [parseFloat(coors[5]), parseFloat(coors[6])]
+                point: [edge.end_point_lat, edge.end_point_lon]
             }], {
                 avoidTrafficJams: true
             });
     }
     return window.ymaps.route([
-        [parseFloat(coors[3]), parseFloat(coors[4])], {
+        [edge.begin_point_lat, edge.begin_point_lon], {
             type: 'wayPoint',
-            point: [parseFloat(coors[5]), parseFloat(coors[6])]
+            point: [edge.end_point_lat, edge.end_point_lon]
         }
     ]);
 };
@@ -35,11 +43,11 @@ const getRoute = (coors, window) => {
  * Функция отвечающая за запись вычисленного значения в исходный файл
  *
  * @param {Object} route - Объект, описывающий проложенный маршрут.
- * @param {Array} line - Массив координат и id ребра
+ * @param {Object} edge - Массив координат и id ребра
  *
  * @return {Promise} необходимо для непрерывной обработки запросов
  */
-const addToBlob = (route, line) => {
+const addToBlob = (route, edge) => {
     let time;
     if (!route) {
         time = "Error: \"Can't construct a route\"";
@@ -52,7 +60,7 @@ const addToBlob = (route, line) => {
     /* eslint-disable no-console */
     methodsDb.updateDb(lines,
         { weight: time },
-        { where: { id: line[0] } }
+        { where: { id: edge.id } }
         );
     return Promise.resolve();
 };
@@ -60,16 +68,16 @@ const addToBlob = (route, line) => {
 /**
  * Функция инициализирует объект яндекс карт
  *
- * @param {Array} linesArray - Массив координат всех ребер
+ * @param {Array} graphArray - Массив координат всех ребер
  * @param {Object} window - виртуальное окно
  */
-const workWithCoors = (linesArray, window) => {
+const workWithCoors = (graphArray, window) => {
     let chain = Promise.resolve();
-    linesArray.forEach(line => {
+    graphArray.forEach(edge => {
         chain = chain
-        .then(() => getRoute(line, window))
+        .then(() => getRoute(edge, window))
         .catch(() => Promise.resolve())
-        .then(route => addToBlob(route, line));
+        .then(route => addToBlob(route, edge));
     });
 };
 

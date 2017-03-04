@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('./../database');
 
-const points = sequelize.define('points', {
+const Points = sequelize.define('points', {
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -13,4 +13,4 @@ const points = sequelize.define('points', {
     }
 });
 
-module.exports = points;
+module.exports = Points;

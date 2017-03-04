@@ -11,7 +11,7 @@ const route = (handle, pathname, response) => {
     /* eslint-disable no-console */
     console.log(`About to route a request for ${pathname}`);
     if (typeof handle[pathname] === 'function') {
-        return handle[pathname](response);
+        return handle[pathname](response, pathname);
     }
     return handle['/getError'](response, pathname);
 };

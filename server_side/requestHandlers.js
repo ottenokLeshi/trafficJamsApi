@@ -4,58 +4,51 @@
  */
 
 const fs = require('fs');
-const pool = require('../database_side/database');
+const lines = require('../database_side/models/lines');
+const methodsDb = require('../database_side/databaseMethods');
+
 
 /**
  * Функция возвращающая пользователю главную html страницу
  *
  * @param {Object} response - ответ на запрос
+ * @param {String} pathname - путь к файлу
  */
-const start = response => {
-    fs.readFile('./public/index.html', (err, data) => {
+const getPublicFile = (response, pathname) => {
+    let filePath = pathname;
+    if (filePath === '/') {
+        filePath = `${filePath}index.html`;
+    }
+    fs.readFile(`./public${filePath}`, (err, data) => {
         if (err) {
             throw err;
         }
-        response.writeHead(200, { 'Content-Type': 'text/html' });
+        response.writeHead(200);
         response.write(data);
         response.end();
     });
 };
 
 /**
- * Функция возвращающая пользователю файл с параметрами
+ * Функция возвращающая пользователю id ребра и его вес
  *
  * @param {Object} response - ответ на запрос
  */
 const getRoutes = response => {
-    pool.query('SELECT id, weight FROM lines ORDER BY id', (err1, data) => {
-        if (err1) {
-            throw err1;
-        }
-        const lines = [];
-        for (let i = 0; i < Object.keys(data.rows).length; i += 1) {
-            const line = [];
-            if (+data.rows[i].weight === 10000000) {
-                line.push(`<br> id = ${data.rows[i].id} Error </br>`);
-            } else {
-                line.push(`<br> id = ${data.rows[i].id} time = ${data.rows[i].weight} </br>`);
-            }
-            lines.push(line);
-        }
-        fs.writeFile('./public/data.txt', lines.join('\n'), err2 => {
-            if (err2) {
-                throw err2;
-            }
-            fs.readFile('./public/data.txt', 'binary', (err, fileData) => {
-                if (err) {
-                    throw err;
-                }
-                response.writeHead(200, { 'Content-Type': 'text/plain' });
-                response.write(fileData);
-                response.end();
-            });
-        });
+    /*
+    methodsDb.readDb(lines, {
+        order: 'id',
+        attributes: ['id', 'weight']
+    }).then(data => {
     });
+    */
+    let stat = fs.statSync('./public/data.txt');
+    response.writeHead(200, {
+        'Content-Type': 'text/html',
+        'Content-Length': stat.size
+    });
+    const readStream = fs.createReadStream('./public/data.txt');
+    readStream.pipe(response);
 };
 
 /**
@@ -71,6 +64,6 @@ const getError = (response, pathname) => {
     response.end('Error!');
 };
 
-exports.start = start;
+exports.getPublicFile = getPublicFile;
 exports.getRoutes = getRoutes;
 exports.getError = getError;
