@@ -35,20 +35,18 @@ const getPublicFile = (response, pathname) => {
  * @param {Object} response - ответ на запрос
  */
 const getRoutes = response => {
-    /*
     methodsDb.readDb(lines, {
         order: 'id',
         attributes: ['id', 'weight']
     }).then(data => {
+        const nodes = data.map(item => {
+            const node = item.toJSON();
+            return `id: ${node.id} weight: ${node.weight}`;
+        }).join('\n');
+        response.writeHead(200);
+        response.write(nodes);
+        response.end();
     });
-    */
-    let stat = fs.statSync('./public/data.txt');
-    response.writeHead(200, {
-        'Content-Type': 'text/html',
-        'Content-Length': stat.size
-    });
-    const readStream = fs.createReadStream('./public/data.txt');
-    readStream.pipe(response);
 };
 
 /**

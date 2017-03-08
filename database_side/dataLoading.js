@@ -80,10 +80,10 @@ const loadLinesToDb = graphArray => {
  * @return {Array} - массив объектов, описывающих вершины графа
  */
 const getNodes = graphArray => {
-    const pointsArray = [];
+    let pointsArray = [];
     /* counter - счетчик для занесения в pointsArray уникальных значений */
     let counter = 1;
-    graphArray.forEach(item => {
+    pointsArray = graphArray.map(item => {
         if (parseInt(item.begin_p, 10) === counter) {
             const lat = parseFloat(item.begin_p_lat);
             const lon = parseFloat(item.begin_p_lon);
@@ -92,13 +92,15 @@ const getNodes = graphArray => {
                 coordinates: [lat, lon],
                 crs: { type: 'name', properties: { name: 'EPSG:4326' } }
             };
-            pointsArray.push({
+            console.log(`${item.begin_p}   ${counter}`)
+            counter += 1;
+            return {
                 id: item.begin_p,
                 point: pointGeo
-            });
-            counter += 1;
+            };
         }
-    });
+        return undefined;
+    }).filter(item => !_.isUndefined(item));
     return pointsArray;
 };
 

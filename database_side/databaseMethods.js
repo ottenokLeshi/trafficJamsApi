@@ -5,7 +5,7 @@
 
 /**
  * Функция Create
- * @param {Object} table - Sequelize-объект, таблица из /models/
+ * @param {Models} table - Sequelize-объект, таблица из /models/
  * @param {Object} elements - добавляемые элементы
  * @return {Promise}
  */
@@ -22,7 +22,7 @@ const createDb = (table, elements) => {
 
 /**
  * Функций Read
- * @param {Object} table - Sequelize-объект, таблица из /models/
+ * @param {Models} table - Sequelize-объект, таблица из /models/
  * @param {Object} parametrs - параметры
  * @return {Promise}
  */
@@ -34,7 +34,7 @@ const readDb = (table, parametrs) => {
 
 /**
  * Функция Update
- * @param {Object} table - Sequelize-объект, таблица из /models/
+ * @param {Models} table - Sequelize-объект, таблица из /models/
  * @param {Object} element - обновляемые значения
  * @param {Object} parametrs - параметры
  * @return {Promise}
@@ -47,14 +47,14 @@ const updateDb = (table, element, parametrs) => {
 
 /**
  * Функция Delete
- * @param {Object} table - Sequelize-объект, таблица из /models/
+ * @param {Models} table - Sequelize-объект, таблица из /models/
  * @param {Object} parametrs - параметры
  * @return {Promise}
  */
 const deleteDb = (table, parametrs) => {
     return table
         .destroy(parametrs)
-         .catch(err => console.log(`Database error: ${err}`));
+        .catch(err => console.log(`Database error: ${err}`));
 };
 
 

@@ -22,7 +22,7 @@ const edgeChecking = edge => {
  * @return {Object} при успешном построении преобразуется в Объект, описывающий маршрут
  */
 const getRoute = (edge, window) => {
-    if (edgeChecking(edge)) {
+    if (edgeChecking(edge) !== -1) {
         return window.ymaps.route([
             [edge.begin_point_lat, edge.begin_point_lon], {
                 type: 'wayPoint',
