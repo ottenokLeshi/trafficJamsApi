@@ -4,35 +4,47 @@
  */
 
 const fs = require('fs');
+const lines = require('../database_side/models/lines');
+const methodsDb = require('../database_side/databaseMethods');
+
 
 /**
  * Функция возвращающая пользователю главную html страницу
  *
  * @param {Object} response - ответ на запрос
+ * @param {String} pathname - путь к файлу
  */
-const start = response => {
-    fs.readFile('../public/index.html', (err, data) => {
+const getPublicFile = (response, pathname) => {
+    let filePath = pathname;
+    if (filePath === '/') {
+        filePath = `${filePath}index.html`;
+    }
+    fs.readFile(`./public${filePath}`, (err, data) => {
         if (err) {
             throw err;
         }
-        response.writeHead(200, { 'Content-Type': 'text/html' });
+        response.writeHead(200);
         response.write(data);
         response.end();
     });
 };
 
 /**
- * Функция возвращающая пользователю файл с параметрами
+ * Функция возвращающая пользователю id ребра и его вес
  *
  * @param {Object} response - ответ на запрос
  */
 const getRoutes = response => {
-    fs.readFile('../public/index.html', (err, data) => {
-        if (err) {
-            throw err;
-        }
-        response.writeHead(200, { 'Content-Type': 'application/json' });
-        response.write(data);
+    methodsDb.readDb(lines, {
+        order: 'id',
+        attributes: ['id', 'weight']
+    }).then(data => {
+        const nodes = data.map(item => {
+            const node = item.toJSON();
+            return `id: ${node.id} weight: ${node.weight}`;
+        }).join('\n');
+        response.writeHead(200);
+        response.write(nodes);
         response.end();
     });
 };
@@ -50,6 +62,6 @@ const getError = (response, pathname) => {
     response.end('Error!');
 };
 
-exports.start = start;
+exports.getPublicFile = getPublicFile;
 exports.getRoutes = getRoutes;
 exports.getError = getError;
