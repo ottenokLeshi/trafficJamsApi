@@ -6,6 +6,7 @@
 const fs = require('fs');
 const lines = require('../database_side/models/lines');
 const methodsDb = require('../database_side/databaseMethods');
+const path = require('path');
 
 /**
  * Функция возвращающая пользователю файл
@@ -41,40 +42,33 @@ const getPublicFile = (response, pathname) => {
     sendData(response, data);
 };
 
-
 /**
- * Функция возвращающая пользователю id ребра и его вес
+ * Функция возвращающая значения из БД в файле с расширением txt
  *
  * @param {Object} response - ответ на запрос
  */
-const getRoutes = response => {
-    methodsDb.readDb(lines, {
-        order: 'id',
-        attributes: ['id', 'weight']
-    }).then(data => {
-        const nodes = data.map(item => {
-            const node = item.toJSON();
-            return `id: ${node.id} weight: ${node.weight}`;
-        }).join('\n');
-        response.writeHead(200);
-        response.write(nodes);
-        response.end();
-    });
+const getRoutesInTXT = response => {
+    response.download(path.join(__dirname, '../public/output.txt'));
 };
 
 /**
- * Функция возвращающая пользователю файл с параметрами
+ * Функция возвращающая значения из БД в файле с расширением txt
  *
  * @param {Object} response - ответ на запрос
- * @param {String} pathname - часть запроса
  */
-const getError = (response, pathname) => {
-    /* eslint-disable no-console */
-    console.log(`No request handler found for ${pathname}`);
-    response.writeHead(404, { 'Content-Type': 'text/html' });
-    response.end('Error!');
+const getRoutesInJSON = response => {
+    methodsDb.readDb(lines, {
+        order: 'id'
+    }).then(data => {
+        const nodes = data.map(item => {
+            return item.toJSON();
+        });
+        const nodesJSON = `{ "nodes" : ${JSON.stringify(nodes)} }`;
+        response.json(JSON.parse(nodesJSON));
+    })
+        
 };
 
 exports.getPublicFile = getPublicFile;
-exports.getRoutes = getRoutes;
-exports.getError = getError;
+exports.getRoutesInTXT = getRoutesInTXT;
+exports.getRoutesInJSON = getRoutesInJSON;

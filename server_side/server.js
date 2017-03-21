@@ -1,20 +1,28 @@
-const http = require('http');
+const express = require('express');
+const requestHandlers = require('./requestHandlers');
 const url = require('url');
 
+const app = express();
 /**
  * Функция запускающая сервер
- *
- * @param {Function} route - функция
- * @param {Array} handle - массив функций-обработчиков запроса
  */
-const start = (route, handle) => {
-    /* eslint-disable no-console */
-    http.createServer((request, response) => {
-        const pathname = url.parse(request.url).pathname;
-        console.log(`Request for ${pathname} received.`);
-        route(handle, pathname, response);
-    }).listen(8888);
-    console.log('Server has started.');
+const start = () => {
+    app.listen(8888, () => {
+        console.log('Express server listening on port 1337');
+    });
+    app.get('/', (request, response) => {
+        requestHandlers.getPublicFile(response, request.url);
+    });
+    app.get('/script.js', (request, response) => {
+        requestHandlers.getPublicFile(response, request.url);
+    });
+    app.get('/file/txt', (request, response) => {
+        requestHandlers.getRoutesInTXT(response, request.url);
+    });
+    app.get('/file/json', (request, response) => {
+        requestHandlers.getRoutesInJSON(response, request.url);
+    });
 };
 
 exports.start = start;
+exports.app = app;

@@ -1,5 +1,6 @@
 const lines = require('../../database_side/models/lines');
 const methodsDb = require('../../database_side/databaseMethods');
+const updateFile = require('../../server_side/fileUpdater');
 
 /**
  * Проверка вершин
@@ -58,11 +59,10 @@ const addToBlob = (route, edge) => {
         }
     }
     /* eslint-disable no-console */
-    methodsDb.updateDb(lines,
+    return methodsDb.updateDb(lines,
         { weight: time },
         { where: { id: edge.id } }
         );
-    return Promise.resolve();
 };
 
 /**
@@ -79,6 +79,7 @@ const workWithCoors = (graphArray, window) => {
         .catch(() => Promise.resolve())
         .then(route => addToBlob(route, edge));
     });
+    chain.then(() => updateFile())
 };
 
 module.exports = workWithCoors;
