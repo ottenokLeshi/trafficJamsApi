@@ -1,6 +1,5 @@
 const lines = require('../../database_side/models/lines');
 const methodsDb = require('../../database_side/databaseMethods');
-const updateFile = require('../../server_side/fileUpdater');
 
 /**
  * Проверка вершин
@@ -79,7 +78,6 @@ const workWithCoors = (graphArray, window) => {
         .catch(() => Promise.resolve())
         .then(route => addToBlob(route, edge));
     });
-    chain.then(() => updateFile())
 };
 
 module.exports = workWithCoors;

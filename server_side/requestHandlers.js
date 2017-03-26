@@ -48,7 +48,20 @@ const getPublicFile = (response, pathname) => {
  * @param {Object} response - ответ на запрос
  */
 const getRoutesInTXT = response => {
-    response.download(path.join(__dirname, '../public/output.txt'));
+    methodsDb.readDb(lines, {
+        order: 'id'
+    }).then(data => {
+        const nodes = data.map(item => {
+            const node = item.toJSON();
+            return `id: ${node.id} weight: ${node.weight} updatedAt: ${node.updatedAt}`;
+        }).join('\n');
+        fs.writeFile('public/output.txt',nodes, (err) =>{
+            if (err) {
+                console.log(err);
+            }
+            response.download(path.join(__dirname, '../public/output.txt'));
+        });
+    });
 };
 
 /**
