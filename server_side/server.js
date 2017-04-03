@@ -25,4 +25,3 @@ const start = () => {
 };
 
 exports.start = start;
-exports.app = app;

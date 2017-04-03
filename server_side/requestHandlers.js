@@ -46,9 +46,11 @@ const getPublicFile = (response, pathname) => {
  * Функция возвращающая значения из БД в файле с расширением txt
  *
  * @param {Object} response - ответ на запрос
+ *
+ * @return {Promise} результат отдачи пользователю txt файла
  */
 const getRoutesInTXT = response => {
-    methodsDb.readDb(lines, {
+    return methodsDb.readDb(lines, {
         order: 'id'
     }).then(data => {
         const nodes = data.map(item => {
@@ -68,9 +70,11 @@ const getRoutesInTXT = response => {
  * Функция возвращающая значения из БД в файле с расширением txt
  *
  * @param {Object} response - ответ на запрос
+ *
+ * @return {Promise} результат отдачи пользователю json
  */
 const getRoutesInJSON = response => {
-    methodsDb.readDb(lines, {
+    return methodsDb.readDb(lines, {
         order: 'id'
     }).then(data => {
         const nodes = data.map(item => {
