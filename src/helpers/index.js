@@ -58,11 +58,10 @@ const addToBlob = (route, edge) => {
         }
     }
     /* eslint-disable no-console */
-    methodsDb.updateDb(lines,
+    return methodsDb.updateDb(lines,
         { weight: time },
         { where: { id: edge.id } }
         );
-    return Promise.resolve();
 };
 
 /**
